@@ -1,0 +1,93 @@
+!!!! -----------------------------OpenSwim----------------------------------
+!! 
+!        Title: Open source Seismic wave input methods (OpenSwim)
+!        Author: Hubery Woo
+!        Institution: Chongqing Three Gorges University
+!        Email: hbw8456@163.com
+!        Date: July 2023
+!
+! This script extracts node and element data from an ANSYS result file
+! and writes the information into a Tecplot-compatible format.
+! It includes definitions for node coordinates, displacements, and element connectivity.
+! The output is organized into a header and data section suitable for visualization in Tecplot.
+!! 
+!!!! -----------------------------------------------------------------------
+
+
+/post1
+file,tunnel,rst                        ! Specify the result file to read data from
+/uis,msgpop,3                          ! No warning messages
+/nerr,0                                ! No error hints
+allsel                                 ! Select all entities
+esel,s,type,,1                         ! Select elements of type 1
+nsle,s,1                               ! Select nodes attached to selected elements
+
+*get,nodenum,node,0,count              ! Get the total number of nodes
+*get,nd,node,0,num,min                 ! Get the lowest node number
+*dim,nodes,array,nodenum               ! Define an array to store node numbers
+*dim,xyz,array,nodenum,3               ! Define a 3D array to store node coordinates
+*dim,dis_xy,array,nodenum              ! Define an array to store displacement
+*dim,vel_xy,array,nodenum              ! Define an array to store velocity
+
+set,1000,1                             ! Read results for load step 1000, substep 1
+
+*do,i,1,nodenum,1
+       nodes(i) = nd                      ! Store node number in the nodes array
+       xyz(i,1) = nx(nd)                  ! Store node x-coordinate
+       xyz(i,2) = ny(nd)                  ! Store node y-coordinate
+       xyz(i,3) = nz(nd)                  ! Store node z-coordinate
+       *get,dis_xy(i),node,nodes(i),u,sum  ! Get node displacement and store it
+       nd = ndnext(nd)                    ! Get the next node number
+*enddo
+
+*get,elementnum,elem,0,count           ! Get the total number of elements
+*get,el,elem,0,num,min                 ! Get the lowest element number
+*dim,elems,array,elementnum            ! Define an array to store element numbers
+*dim,ndlst,array,elementnum,8          ! Define an array to store element node numbers
+
+*do,i,1,elementnum,1
+       elems(i) = el                      ! Store element number in elems array
+       *do,j,1,8,1
+              ndlst(i,j) = nelem(el,j)        ! Store corresponding node number for each element
+       *enddo
+       el = elnext(el)                    ! Get the next element number
+*enddo
+
+*cfopen,mesh,dat                  ! Open output file: mesh.dat
+
+! Write Tecplot file header
+*vwrite 
+('title="ansys analysis"')
+
+! Write variable names
+*vwrite
+('variables="x","y","displacement"')
+
+! Write node count and element count
+*vwrite,nodenum,elementnum
+('zone n='f8.1,', e='f8.1,', f=fepoint',', et=quadrilateral')
+
+! Write node coordinates and displacement
+*vwrite
+(' ')
+*vwrite,xyz(1,1),xyz(1,2),dis_xy(1)
+(3f12.6)
+
+! Write an empty line
+*vwrite
+(' ')
+
+! Write element node numbers
+*vwrite,ndlst(1,1),ndlst(1,2),ndlst(1,3),ndlst(1,4)
+(4f8.0)
+! Close file
+*cfclose
+
+! Clear variables
+nodes =
+xyz =
+dis_xy =
+vel_xy =
+elems =
+ndlst =
+finish

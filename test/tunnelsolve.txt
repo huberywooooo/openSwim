@@ -1,14 +1,17 @@
-!!
-!!!!-----------------------------swim--------------------------------------
-!!!!
-!       1.swim全称为seismic wave input methods，用于二维地震波斜入射传递矩阵；
-!       2.地震波包括常见脉冲、天然波以及人造波的p、sv和sh波和扭转等六个分量；
-!         输入信息node_inf.dat为节点数据，包括节点号，xyz坐标和影响面积；
-!         分别命名为左，右，底；注意局部与整体坐标系的转换！
-!       3.把隧道改成围岩，测试计算结果
-!                                        by huberywoo, hbw8456@163.com
-!                                        2023年7月,重庆三峡学院慎思楼426 
-!!!!-----------------------------------------------------------------------
+!!!! -----------------------------OpenSwim----------------------------------
+!! 
+!        Title: Open source Seismic wave input methods (OpenSwim)
+!        Author: Hubery Woo
+!        Institution: Chongqing Three Gorges University
+!        Email: hbw8456@163.com
+!        Date: July 2023
+!
+! This script extracts node and element data from an ANSYS result file
+! and writes the information into a Tecplot-compatible format.
+! It includes definitions for node coordinates, displacements, and element connectivity.
+! The output is organized into a header and data section suitable for visualization in Tecplot.
+!! 
+!!!! -----------------------------------------------------------------------
 /input,ddtunnelmodel.txt
 
 !!!!---------------------初始地应力求解----------------------------
