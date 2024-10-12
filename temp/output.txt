@@ -1,0 +1,258 @@
+
+ ANSYS Mechanical Enterprise                       
+
+
+ *------------------------------------------------------------------*
+ |                                                                  |
+ |   W E L C O M E   T O   T H E   A N S Y S (R)  P R O G R A M     |
+ |                                                                  |
+ *------------------------------------------------------------------*
+
+
+
+
+ ***************************************************************
+ *            ANSYS Release 19.2     LEGAL NOTICES             *
+ ***************************************************************
+ *                                                             *
+ * Copyright 1971-2018 ANSYS, Inc.  All rights reserved.       *
+ * Unauthorized use, distribution or duplication is            *
+ * prohibited.                                                 *
+ *                                                             *
+ * Ansys is a registered trademark of ANSYS, Inc. or its       *
+ * subsidiaries in the United States or other countries.       *
+ * See the ANSYS, Inc. online documentation or the ANSYS, Inc. *
+ * documentation CD or online help for the complete Legal      *
+ * Notice.                                                     *
+ *                                                             *
+ ***************************************************************
+ *                                                             *
+ * THIS ANSYS SOFTWARE PRODUCT AND PROGRAM DOCUMENTATION       *
+ * INCLUDE TRADE SECRETS AND CONFIDENTIAL AND PROPRIETARY      *
+ * PRODUCTS OF ANSYS, INC., ITS SUBSIDIARIES, OR LICENSORS.    *
+ * The software products and documentation are furnished by    *
+ * ANSYS, Inc. or its subsidiaries under a software license    *
+ * agreement that contains provisions concerning               *
+ * non-disclosure, copying, length and nature of use,          *
+ * compliance with exporting laws, warranties, disclaimers,    *
+ * limitations of liability, and remedies, and other           *
+ * provisions.  The software products and documentation may be *
+ * used, disclosed, transferred, or copied only in accordance  *
+ * with the terms and conditions of that software license      *
+ * agreement.                                                  *
+ *                                                             *
+ * ANSYS, Inc. is a UL registered                              *
+ * ISO 9001:2008 company.                                      *
+ *                                                             *
+ ***************************************************************
+ *                                                             *
+ * This product is subject to U.S. laws governing export and   *
+ * re-export.                                                  *
+ *                                                             *
+ * For U.S. Government users, except as specifically granted   *
+ * by the ANSYS, Inc. software license agreement, the use,     *
+ * duplication, or disclosure by the United States Government  *
+ * is subject to restrictions stated in the ANSYS, Inc.        *
+ * software license agreement and FAR 12.212 (for non-DOD      *
+ * licenses).                                                  *
+ *                                                             *
+ ***************************************************************
+
+ Release 19.2
+     
+ Point Releases and Patches installed:   
+     
+ ANSYS, Inc. Products Release 19.2   
+ SpaceClaim Release 19.2 
+ LS-DYNA Release 19.2
+ Mechanical Products Release 19.2
+ ACIS Geometry Interface Release 19.2
+ AutoCAD Geometry Interface Release 19.2 
+ Catia, Version 4 Geometry Interface Release 19.2
+ Catia, Version 6 Geometry Interface Release 19.2
+ Creo Elements/Direct Modeling Geometry Interface Release 19.2   
+ Creo Parametric Geometry Interface Release 19.2 
+ Inventor Geometry Interface Release 19.2
+ JTOpen Geometry Interface Release 19.2  
+ NX Geometry Interface Release 19.2  
+ Parasolid Geometry Interface  Release 19.2  
+ Solid Edge Geometry Interface Release 19.2  
+ SOLIDWORKS Geometry Interface Release 19.2  
+ ANSYS, Inc. License Manager Release 19.2
+
+
+          *****  ANSYS COMMAND LINE ARGUMENTS  *****
+  BATCH MODE REQUESTED (-b)    = LIST
+  INPUT FILE COPY MODE (-c)    = COPY
+  SHARED MEMORY PARALLEL REQUESTED
+    SINGLE PROCESS WITH SINGLE THREAD REQUESTED
+    TOTAL OF     1 CORES REQUESTED
+  INPUT FILE NAME              = C:\Users\woo\Documents\matlab\openSwim\test\post.inp
+  OUTPUT FILE NAME             = C:\Users\woo\Documents\matlab\openSwim\temp\output.txt
+
+ RELEASE= Release 19.2         BUILD= 19.2      UP20180808   VERSION=WINDOWS x64 
+ CURRENT JOBNAME=file  13:07:16  OCT 12, 2024 CP=      0.016
+
+     1  !!!! -----------------------------OpenSwim----------------------------------
+     2  !!  
+     3  !        Title: Open source Seismic wave input methods (OpenSwim)   
+     4  !        Author: Hubery Woo 
+     5  !        Institution: Chongqing Three Gorges University 
+     6  !        Email: hbw8456@163.com 
+     7  !        Date: July 2023
+     8  !   
+     9  ! This script extracts node and element data from an ANSYS result file  
+    10  ! and writes the information into a Tecplot-compatible format.  
+    11  ! It includes definitions for node coordinates, displacements, and element connectivity.
+    12  ! The output is organized into a header and data section suitable for visualization in Tecplot. 
+    13  !!  
+    14  !!!! -----------------------------------------------------------------------
+    15      
+    16      
+    17  resume,'tunnel','db'
+    18      
+    19      
+    20  /post1  
+    21  allsel  
+    22  esel,s,type,,1  
+    23  nsle,s  
+    24  nplot   
+    25  set,last
+    26  PLNSOL, U,SUM, 0,1.0
+
+ RUN SETUP PROCEDURE FROM FILE= C:\Program Files\ANSYS Inc\v192\ANSYS\apdl\start.ans
+
+ /INPUT FILE= C:\Program Files\ANSYS Inc\v192\ANSYS\apdl\start.ans  LINE=       0
+
+ RESUME ANSYS DATA FROM FILE NAME=tunnel.db                                                                                                                                                                                                                                                           
+
+ *** ANSYS GLOBAL STATUS *** 
+
+ TITLE =                                                                       
+ NUMBER OF ELEMENT TYPES =      2
+      1402 ELEMENTS CURRENTLY SELECTED.  MAX ELEMENT NUMBER =        1402
+      1473 NODES CURRENTLY SELECTED.     MAX NODE NUMBER =           1473
+         4 KEYPOINTS CURRENTLY SELECTED. MAX KEYPOINT NUMBER =          4
+         4 LINES CURRENTLY SELECTED.     MAX LINE NUMBER =              4
+         1 AREAS CURRENTLY SELECTED.     MAX AREA NUMBER =              1
+         6 COMPONENTS CURRENTLY DEFINED
+ MAXIMUM LINEAR PROPERTY NUMBER        =       1
+ MAXIMUM REAL CONSTANT SET NUMBER      =     202
+ ACTIVE COORDINATE SYSTEM              =       0  (CARTESIAN)  
+ NUMBER OF SPECIFIED CONSTRAINTS       =     404
+
+ INITIAL JOBNAME = file
+ CURRENT JOBNAME = file
+
+ *** ANSYS - ENGINEERING ANALYSIS SYSTEM  RELEASE Release 19.2     19.2     ***
+ ANSYS Mechanical Enterprise                       
+ 00000000  VERSION=WINDOWS x64   13:07:16  OCT 12, 2024 CP=      0.031
+
+                                                                               
+
+
+
+          ***** ANSYS RESULTS INTERPRETATION (POST1) *****
+
+ *** NOTE ***                            CP =       0.031   TIME= 13:07:16
+ Reading results into the database (SET command) will update the current 
+ displacement and force boundary conditions in the database with the     
+ values from the results file for that load set.  Note that any          
+ subsequent solutions will use these values unless action is taken to    
+ either SAVE the current values or not overwrite them (/EXIT,NOSAVE).    
+
+ SELECT ALL ENTITIES OF TYPE= ALL  AND BELOW
+
+ SELECT       FOR ITEM=TYPE COMPONENT=    
+  IN RANGE         1 TO          1 STEP          1
+
+       1200  ELEMENTS (OF       1402  DEFINED) SELECTED BY  ESEL  COMMAND.
+
+ SELECT      ALL NODES HAVING ANY ELEMENT IN ELEMENT SET.
+
+       1271 NODES (OF       1473  DEFINED) SELECTED FROM
+     1200 SELECTED ELEMENTS BY NSLE COMMAND.
+
+ *** NOTE *** Display device has not yet been specified with the /SHOW command.  Display commands ignored. 
+
+
+ USE LAST SUBSTEP ON RESULT FILE  FOR LOAD CASE 0 
+
+ *** ERROR ***                           CP =       0.031   TIME= 13:07:16
+ An error occurred while attempting to open the results file file.rst.   
+
+ *** ERROR ***                           CP =       0.031   TIME= 13:07:16
+ No results file available.                                              
+
+
+ NUMBER OF WARNING MESSAGES ENCOUNTERED=          0
+ NUMBER OF ERROR   MESSAGES ENCOUNTERED=          2
+
+
+
+ ***** PROBLEM TERMINATED BY INDICATED ERROR(S) OR BY END OF INPUT DATA *****
+
++--------------------- A N S Y S   S T A T I S T I C S ------------------------+
+
+Release: Release 19.2       Build: 19.2       Update: UP20180808   Platform: WINDOWS x64 
+Date Run: 10/12/2024   Time: 13:07     Process ID: 12132
+Operating System: Windows 8  (Build: 9200)
+
+Processor Model: 12th Gen Intel(R) Core(TM) i5-12500H
+
+Compiler: Intel(R) FORTRAN Compiler Version 17.0.4  (Build: 20170411)
+          Intel(R) C/C++ Compiler Version 17.0.4  (Build: 20170411)
+          Intel(R) Math Kernel Library Version 2017.0.3 Product Build 20170413
+
+Number of machines requested            :    1
+Total number of cores available         :   16
+Number of physical cores available      :   12
+Number of processes requested           :    1
+Number of threads per process requested :    1
+Total number of cores requested         :    1 (Shared Memory Parallel)                    
+
+GPU Acceleration: Not Requested
+
+Job Name: file
+Input File: C:\Users\woo\Documents\matlab\openSwim\test\post.inp
+Working Directory: C:\Users\woo\Documents\matlab\openSwim\temp
+
+Total CPU time for main thread                    :        0.1 seconds
+Total CPU time summed for all threads             :        0.0 seconds
+
+Elapsed time spent pre-processing model (/PREP7)  :        0.0 seconds
+Elapsed time spent solution - preprocessing       :        0.0 seconds
+Elapsed time spent computing solution             :        0.0 seconds
+Elapsed time spent solution - postprocessing      :        0.0 seconds
+Elapsed time spent post-processing model (/POST1) :        0.0 seconds
+ 
+
+Maximum total memory used                         :        4.0 MB
+Maximum total memory allocated                    :     2112.0 MB
+Total physical memory available                   :         16 GB
+
+Total amount of I/O written to disk               :        0.0 GB
+Total amount of I/O read from disk                :        0.0 GB
+
++------------------ E N D   A N S Y S   S T A T I S T I C S -------------------+
+
+
+ *---------------------------------------------------------------------------*
+ |                                                                           |
+ |                            ANSYS RUN COMPLETED                            |
+ |                                                                           |
+ |---------------------------------------------------------------------------|
+ |                                                                           |
+ | Ansys Release 19.2          Build 19.2         UP20180808     WINDOWS x64 |
+ |                                                                           |
+ |---------------------------------------------------------------------------|
+ |                                                                           |
+ | Database Requested(-db)  1024 MB    Scratch Memory Requested      1024 MB |
+ | Maximum Database Used       2 MB    Maximum Scratch Memory Used      2 MB |
+ |                                                                           |
+ |---------------------------------------------------------------------------|
+ |                                                                           |
+ |        CP Time      (sec) =          0.047       Time  =  13:07:16        |
+ |        Elapsed Time (sec) =          5.000       Date  =  10/12/2024      |
+ |                                                                           |
+ *---------------------------------------------------------------------------*

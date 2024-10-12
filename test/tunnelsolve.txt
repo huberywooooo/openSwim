@@ -1,0 +1,411 @@
+!!
+!!!!-----------------------------swim--------------------------------------
+!!!!
+!       1.swim全称为seismic wave input methods，用于二维地震波斜入射传递矩阵；
+!       2.地震波包括常见脉冲、天然波以及人造波的p、sv和sh波和扭转等六个分量；
+!         输入信息node_inf.dat为节点数据，包括节点号，xyz坐标和影响面积；
+!         分别命名为左，右，底；注意局部与整体坐标系的转换！
+!       3.把隧道改成围岩，测试计算结果
+!                                        by huberywoo, hbw8456@163.com
+!                                        2023年7月,重庆三峡学院慎思楼426 
+!!!!-----------------------------------------------------------------------
+/input,ddtunnelmodel.txt
+
+!!!!---------------------初始地应力求解----------------------------
+
+/solu
+allsel
+antype,trans
+nropt,full
+! eqslv,pcg
+! trnopt,full
+! nlgeom,1 
+timint,off    ! 关闭时间积分
+kbc,1!必须设置阶跃荷载
+nsubst,2!子步数必须≥2
+outres,all,all
+
+
+time,1e-5
+cmsel,s,e_spring
+ekill,all
+cmsel,s,chuzhi
+ekill,all
+
+
+cmsel,s,ndleft
+cmsel,a,ndright
+d,all,ux
+cmsel,s,ndbottom
+d,all,uy
+
+allsel
+acel,0,9.8
+solve
+save,'tunnel','db'
+
+time,2e-5
+timint,off    ! 关闭时间积分
+kbc,1!必须设置阶跃荷载
+nsubst,2!子步数必须≥2
+outres,all,all
+
+! nropt,full
+! eqslv,pcg
+! trnopt,full
+! nlgeom,1 
+
+cmsel,s,kaiwa
+ekill,all
+
+allsel
+solve
+save,'tunnel','db'
+
+
+
+time,3e-5
+timint,off    ! 关闭时间积分
+kbc,1!必须设置阶跃荷载
+nsubst,2!子步数必须≥2
+outres,all,all
+
+! nropt,full
+! eqslv,pcg
+! trnopt,full
+! nlgeom,1 
+
+cmsel,s,kaiwa
+ekill,all
+cmsel,s,chuzhi
+ealive,all
+
+
+allsel
+solve
+save,'tunnel','db'
+
+
+
+time,4e-5
+timint,off    ! 关闭时间积分
+kbc,1!必须设置阶跃荷载
+nsubst,2!子步数必须≥2
+outres,all,all
+
+! nropt,full
+! eqslv,pcg
+! trnopt,full
+! nlgeom,1 
+
+cmsel,s,erchen
+ealive,all
+mpchg,2,all
+
+allsel
+solve
+
+save,'tunnel','db'
+
+
+
+
+! /eof
+
+!!!!---------------------提取固定边界等效荷载--------------------------
+
+/post1
+allsel
+set,4,2
+
+
+cmsel,s,ndleft
+*get,node_num1,node,0,count
+*get,nd1,node,0,num,min
+! *dim,nodes,array,node_num
+*dim,nforce1,array,node_num1,4
+
+*do,i,1,node_num1,1
+nforce1(i,1)=nd1
+nd1=ndnext(nd1)
+*enddo
+
+*do,i,1,node_num1,1
+nsel,s,node,,nforce1(i,1)
+fsum,,,
+*get,nforce1(i,2),fsum,0,item,fx
+*get,nforce1(i,3),fsum,0,item,fy
+! *get,nforce(i,4),fsum,0,item,fz
+*enddo
+
+*cfopen,nforce1,dat           !支座反力
+*vwrite,nforce1(1,1),nforce1(1,2),nforce1(1,3)
+(3f15.2)
+*cfclose
+
+!!!!---------------------左侧----------------------------
+cmsel,s,ndright
+*get,node_num2,node,0,count
+*get,nd2,node,0,num,min
+! *dim,nodes,array,node_num
+*dim,nforce2,array,node_num2,4
+
+*do,i,1,node_num2,1
+nforce2(i,1)=nd2
+nd2=ndnext(nd2)
+*enddo
+
+*do,i,1,node_num2,1
+nsel,s,node,,nforce2(i,1)
+fsum,,,
+*get,nforce2(i,2),fsum,0,item,fx
+*get,nforce2(i,3),fsum,0,item,fy
+! *get,nforce(i,4),fsum,0,item,fz
+*enddo
+
+*cfopen,nforce2,dat           !支座反力
+*vwrite,nforce2(1,1),nforce2(1,2),nforce2(1,3)
+(3f15.2)
+*cfclose
+!!!!---------------------右侧----------------------------
+cmsel,s,ndbottom
+*get,node_num3,node,0,count
+*get,nd3,node,0,num,min
+! *dim,nodes,array,node_num
+*dim,nforce3,array,node_num3,4
+
+*do,i,1,node_num3,1
+nforce3(i,1)=nd3
+nd3=ndnext(nd3)
+*enddo
+
+*do,i,1,node_num3,1
+nsel,s,node,,nforce3(i,1)
+fsum,,,
+*get,nforce3(i,2),fsum,0,item,fx
+*get,nforce3(i,3),fsum,0,item,fy
+! *get,nforce(i,4),fsum,0,item,fz
+*enddo
+
+*cfopen,nforce3,dat           !支座反力
+*vwrite,nforce3(1,1),nforce3(1,2),nforce3(1,3)
+(3f15.2)
+*cfclose
+!!!!---------------------底部----------------------------
+
+!!!!---------------------开挖过程，还是静力分析--------------------
+
+! /eof
+
+
+/solu
+antype,,rest,4,2
+
+!!!!---------------------读入数组----------------------------
+cmsel,s,ndleft
+*get,node_num1,node,0,count
+*get,nd1,node,0,num,min
+! *dim,nodes,array,node_num
+*dim,nforce1,array,node_num1,4
+
+cmsel,s,ndright
+*get,node_num2,node,0,count
+*get,nd2,node,0,num,min
+! *dim,nodes,array,node_num
+*dim,nforce2,array,node_num2,4
+
+cmsel,s,ndbottom
+*get,node_num3,node,0,count
+*get,nd3,node,0,num,min
+! *dim,nodes,array,node_num
+*dim,nforce3,array,node_num3,4
+
+! *create nodeloadff
+*vread,nforce1(1,1),nforce1,dat,c:\users\administrator\documents\ansys,jik,3,node_num1
+(3f15.2)
+*vread,nforce2(1,1),nforce2,dat,c:\users\administrator\documents\ansys,jik,3,node_num2
+(3f15.2)
+*vread,nforce3(1,1),nforce3,dat,c:\users\administrator\documents\ansys,jik,3,node_num3
+(3f15.2)
+
+! nodeloadff
+
+! /eof
+time,5e-5
+timint,off    ! 关闭时间积分
+kbc,1!必须设置阶跃荷载
+nsubst,2!子步数必须≥2
+outres,all,all
+
+! nlgeom,1 
+cmsel,s,e_spring
+ealive,all
+cmsel,s,ndleft
+cmsel,a,ndright
+ddele,all,all
+cmsel,s,ndbottom
+ddele,all,all
+
+cmsel,s,kaiwa
+ekill,all
+cmsel,s,chuzhi
+ealive,all
+cmsel,s,erchen
+ealive,all
+mpchg,2,all
+
+cmsel,s,ndleft
+*do,i,1,node_num1,1
+f,nforce1(i,1),fx,-nforce1(i,2)
+f,nforce1(i,1),fy,-nforce1(i,3)
+*enddo
+cmsel,s,ndright
+*do,i,1,node_num2,1
+f,nforce2(i,1),fx,-nforce2(i,2)
+f,nforce2(i,1),fy,-nforce2(i,3)
+*enddo
+cmsel,s,ndbottom
+*do,i,1,node_num3,1
+f,nforce3(i,1),fx,-nforce3(i,2)
+f,nforce3(i,1),fy,-nforce3(i,3)
+*enddo
+
+acel,0,9.8
+allsel
+solve
+finish
+save,'tunnel','db'
+
+! /eof
+
+!!!!--------------------加载地震波数据-------------------------------------
+
+/solu
+antype,,rest,5,2,0
+! antype,trans
+! trnopt,full
+! lumpm,0
+
+timint,on!打开时间积分效应
+kbc,1
+nsubst,1
+outres,all,all
+
+
+
+cmsel,s,e_spring
+ealive,all
+cmsel,s,ndleft
+cmsel,a,ndright
+ddele,all,all
+cmsel,s,ndbottom
+ddele,all,all
+
+cmsel,s,kaiwa
+ekill,all
+cmsel,s,chuzhi
+ealive,all
+cmsel,s,erchen
+ealive,all
+mpchg,2,all
+!!!!---------------------求解设置，荷载叠加！----------------------------
+
+! 读入节点荷载信息
+no1=time_num*nodenum1
+no2=time_num*nodenum2
+no3=time_num*nodenum3
+
+*dim,node1,array,no1,3
+*dim,node2,array,no2,3   
+*dim,node3,array,no3,3  
+
+
+*vread,node1(1,1),nleft,dat,c:\users\administrator\documents\matlab,jik,3,no1  
+(3f17.1)
+*vread,node2(1,1),nright,dat,c:\users\administrator\documents\matlab,jik,3,no2  
+(3f17.1)
+*vread,node3(1,1),nbottom,dat,c:\users\administrator\documents\matlab,jik,3,no3  
+(3f17.1)
+
+cmsel,s,ndleft
+*get,node_num1,node,0,count
+*get,nd1,node,0,num,min
+*dim,nforce1,array,node_num1,4
+
+cmsel,s,ndright
+*get,node_num2,node,0,count
+*get,nd2,node,0,num,min
+*dim,nforce2,array,node_num2,4
+
+cmsel,s,ndbottom
+*get,node_num3,node,0,count
+*get,nd3,node,0,num,min
+*dim,nforce3,array,node_num3,4
+
+*vread,nforce1(1,1),nforce1,dat,c:\users\administrator\documents\ansys,jik,3,node_num1
+(3f15.2)
+*vread,nforce2(1,1),nforce2,dat,c:\users\administrator\documents\ansys,jik,3,node_num2
+(3f15.2)
+*vread,nforce3(1,1),nforce3,dat,c:\users\administrator\documents\ansys,jik,3,node_num3
+(3f15.2)
+
+! /eof
+
+*do,t,1,time_num,1
+
+time,t*dtime
+!循环施加荷载
+
+cmsel,s,ndleft
+nplot
+*do,i,1,nodenum1,1
+! f,node1((i-1)*time_num+t,1),fx,node1((i-1)*time_num+t,2)
+! f,node1((i-1)*time_num+t,1),fy,node1((i-1)*time_num+t,3)
+f,node1((i-1)*time_num+t,1),fx,node1((i-1)*time_num+t,2)-nforce1(i,2)
+f,node1((i-1)*time_num+t,1),fy,node1((i-1)*time_num+t,3)-nforce1(i,3)
+*enddo
+
+allsel
+cmsel,s,ndright
+nplot
+*do,i,1,nodenum2,1
+! f,node2((i-1)*time_num+t,1),fx,node2((i-1)*time_num+t,2)
+! f,node2((i-1)*time_num+t,1),fy,node2((i-1)*time_num+t,3)
+f,node2((i-1)*time_num+t,1),fx,node2((i-1)*time_num+t,2)-nforce2(i,2)
+f,node2((i-1)*time_num+t,1),fy,node2((i-1)*time_num+t,3)-nforce2(i,3)
+*enddo
+
+allsel
+cmsel,s,ndbottom
+nplot
+*do,i,1,nodenum3,1
+! f,node3((i-1)*time_num+t,1),fx,node3((i-1)*time_num+t,2)
+! f,node3((i-1)*time_num+t,1),fy,node3((i-1)*time_num+t,3)
+f,node3((i-1)*time_num+t,1),fx,node3((i-1)*time_num+t,2)-nforce3(i,2)
+f,node3((i-1)*time_num+t,1),fy,node3((i-1)*time_num+t,3)-nforce3(i,3)
+*enddo
+
+allsel
+acel,0,9.8
+solve
+save,'tunnel','db'
+
+*enddo
+
+finish
+
+save,'tunnel','db'
+
+
+
+
+
+
+
+
+
+
+
+
+
+

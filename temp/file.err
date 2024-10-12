@@ -1,0 +1,17 @@
+/COM,ANSYS RELEASE Release 19.2      BUILD 19.2      UP20180808       13:06:53
+/COM,ANSYS RELEASE Release 19.2      BUILD 19.2      UP20180808       13:07:04
+
+ *** WARNING ***                         CP =       0.047   TIME= 13:07:08
+ An invalid file name was specified.                                     
+  File name= .                                                           
+
+ *** ERROR ***                           CP =       0.047   TIME= 13:07:08
+ *VREAD cannot open file C:\Users\Administrator\Documents\MATLAB\nleft.da
+ t.                                                                      
+/COM,ANSYS RELEASE Release 19.2      BUILD 19.2      UP20180808       13:07:12
+
+ *** ERROR ***                           CP =       0.031   TIME= 13:07:16
+ An error occurred while attempting to open the results file file.rst.   
+
+ *** ERROR ***                           CP =       0.031   TIME= 13:07:16
+ No results file available.                                              

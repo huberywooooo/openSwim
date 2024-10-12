@@ -1,0 +1,265 @@
+!!
+!!!!-----------------------------swim--------------------------------------
+!!!!
+!       1.swim全称为seismic wave input methods，用于二维地震波斜入射传递矩阵；
+!       2.地震波包括常见脉冲、天然波以及人造波的p、sv和sh波和扭转等六个分量；
+!         输入信息node_inf.dat为节点数据，包括节点号，xyz坐标和影响面积；
+!         分别命名为左，右，底；注意局部与整体坐标系的转换！
+!       3.把隧道改成围岩，测试计算结果
+!                                        by huberywoo, hbw8456@163.com
+!                                        2023年7月,重庆三峡学院慎思楼426 
+!!!!-----------------------------------------------------------------------
+
+! ---------------------------------------post1提取初支弯矩结果
+resume,'tunnel','db'
+
+/prep7
+! 定义读取结果的分类index，例如chuzhi-1-2-3.dat代表，初支弯矩，p波入射10度，时间20s的计算结果
+index1=2  !1代表p波，2代表sv波
+index2=1  !p波0-10-20-30-40-50；sv波0-10-20-28；平面theta=0-30-45-60-90
+index3=1  !时间，共有1-5个，参考下面timestps设置，0，10，20，30，40s的计算结果
+numvar=2005 !计算时间参数
+timesps1=10
+timesps2=2002
+timesps3=498
+finish
+save,'tunnel','db'
+
+
+resume,'tunnel','db'
+
+/post1
+allsel
+! ! 建立局部坐标系
+! kwplan,-1,      10  
+! cswpla,11,1,1,1,
+! csys,11,
+! dsys,11,
+! rsys,11 
+
+! 地震波入射角
+! theta=0
+
+! 起始时间20，最终时间100，时间增量20
+*do,timesps,timesps1,timesps2,timesps3
+! 读取不同时间步
+set,timesps
+cmsel,s,chuzhi 
+nsle,s,1
+etable, ,smisc, 6     
+etable, ,smisc, 12   
+plls,smis6,smis12,0.5
+
+*get,nodenum,node,0,count                    !得到模型的所有节点数
+*get,nd,node,0,num,min                       !得到模型的最小节点编号
+*dim,nodes,array,nodenum                   !定义一个存储节点的数组
+*dim,xyz,array,nodenum,3                   !定义一个存储节点坐标的数组
+*dim,ang_node,array,nodenum
+
+
+! *get,nodenum,node,0,count                    !得到模型的所有节点数
+! *dim,nodes,array,nodenum,1                   !定义一个存储节点的数组
+nd=320
+*do,i,1,nodenum
+nodes(i)=nd
+xyz(i,1)=nx(nd)                          !在xyz(i,1)中存储节点的x坐标
+xyz(i,2)=ny(nd)                          !在xyz(i,1)中存储节点的y坐标 
+xyz(i,3)=nz(nd)                          !在xyz(i,1)中存储节点的z坐标
+nd=nnear(nd) !离ni最近的节点号赋予ni
+nsel,u,,,nodes(i) !不选上一个节点，防止最近距离反复
+*enddo
+
+
+! *do,i,1,nodenum,1
+! nodes(i)=nd                            !将节点编号存储在nodes数组中 
+! xyz(i,1)=nx(nd)                          !在xyz(i,1)中存储节点的x坐标
+! xyz(i,2)=ny(nd)                          !在xyz(i,1)中存储节点的y坐标 
+! xyz(i,3)=nz(nd)                          !在xyz(i,1)中存储节点的z坐标
+! *get,ang_node(i),node,nodes(i),loc,y
+! nd=ndnext(nd)                         !取得下一个节点编号 
+! *enddo 
+
+*get,elemnum,elem,0,count                !得到模型的所有单元数
+*get,el,elem,0,num,min                      !得到模型的最小单元编号 
+*dim,elems,array,elemnum                !定义一个存储单元的数组 
+*dim,ndlst,array,elemnum,2                 !定义一个存储节点坐标的数组
+*dim,moment,array,elemnum,2 
+ 
+*do,i,1,elemnum,1
+elems(i)=el                            !将单元编号存储在elems数组中
+*get,moment(i,1),elem,elems(i),etab,smis6
+*get,moment(i,2),elem,elems(i),etab,smis12
+
+*do,j,1,2,1 
+	ndlst(i,j)=nelem(el,j)             !将单元对应的节点编号存储在ndlst数组中
+*enddo 
+el=elnext(el)                             !取得下一个单元编号
+*enddo 
+
+
+*cfopen,chuzhi-%index1%-%index2%-%index3%,dat     !输出的文件名为：mesh.dat
+*vwrite,elems(1),ndlst(1,1),ndlst(1,2),moment(1,1),moment(1,2),nodes(1),xyz(1,1),xyz(1,2)
+(8f10.2)
+*cfclose
+
+
+nodes=
+xyz=
+ang_node=
+moment=
+elems=
+ndlst=
+*set,index3,index3+1  ! 在每次循环中将x的值加1  
+*enddo
+! ---------------------------------------post1提取二衬位移应力结果
+
+resume,'tunnel','db'
+
+/post1
+allsel
+
+! 起始时间20，最终时间100，时间增量20
+
+*do,timesps,timesps1,timesps2,timesps3
+! 读取不同时间步
+set,timesps
+lsel,s,,,2,14,3
+nsll,s,1
+
+*get,nodenum,node,0,count                    !得到模型的所有节点数
+*get,nd,node,0,num,min                       !得到模型的最小节点编号
+*dim,nodes,array,nodenum                   !定义一个存储节点的数组
+*dim,xyz,array,nodenum,3                   !定义一个存储节点坐标的数组
+*dim,disp,array,nodenum,3
+*dim,sigma,array,nodenum,2
+! 提取二衬节点的xy，sum位移，s1和s3应力
+
+nd=320
+*do,i,1,nodenum
+nodes(i)=nd
+xyz(i,1)=nx(nd)                          !在xyz(i,1)中存储节点的x坐标
+xyz(i,2)=ny(nd)                          !在xyz(i,1)中存储节点的y坐标 
+xyz(i,3)=nz(nd)                          !在xyz(i,1)中存储节点的z坐标
+*get,sigma(i,1),node,nodes(i),s,1
+*get,sigma(i,2),node,nodes(i),s,3
+*get,disp(i,1),node,nodes(i),u,x
+*get,disp(i,2),node,nodes(i),u,y
+*get,disp(i,3),node,nodes(i),u,sum
+
+nd=nnear(nd) !离ni最近的节点号赋予ni
+nsel,u,,,nodes(i) !不选上一个节点，防止最近距离反复
+*enddo
+
+
+*cfopen,erchenwai-%index1%-%index2%-%index3%,dat     !输出的文件名为：mesh.dat
+*vwrite,nodes(1),xyz(1,1),xyz(1,2),disp(1,1),disp(1,2),disp(1,3),sigma(1,1),sigma(1,2)
+(8f12.2)
+*cfclose
+
+nodes=
+xyz=
+disp=
+sigma=
+moment=
+elems=
+ndlst=
+*set,index3,index3+1  ! 在每次循环中将x的值加1  
+
+*enddo
+finish
+
+
+resume,'tunnel','db'
+/post1
+allsel
+*do,timesps,timesps1,timesps2,timesps3
+! 读取不同时间步
+
+set,timesps
+lsel,s,,,1,13,3
+nsll,s,1
+
+*get,nodenum,node,0,count                    !得到模型的所有节点数
+*get,nd,node,0,num,min                       !得到模型的最小节点编号
+*dim,nodes,array,nodenum                   !定义一个存储节点的数组
+*dim,xyz,array,nodenum,3                   !定义一个存储节点坐标的数组
+*dim,disp,array,nodenum,3
+*dim,sigma,array,nodenum,2
+! 提取二衬节点的xy，sum位移，s1和s3应力
+
+nd=301
+*do,i,1,nodenum
+nodes(i)=nd
+xyz(i,1)=nx(nd)                          !在xyz(i,1)中存储节点的x坐标
+xyz(i,2)=ny(nd)                          !在xyz(i,1)中存储节点的y坐标 
+xyz(i,3)=nz(nd)                          !在xyz(i,1)中存储节点的z坐标
+*get,sigma(i,1),node,nodes(i),s,1
+*get,sigma(i,2),node,nodes(i),s,3
+*get,disp(i,1),node,nodes(i),u,x
+*get,disp(i,2),node,nodes(i),u,y
+*get,disp(i,3),node,nodes(i),u,sum
+
+nd=nnear(nd) !离ni最近的节点号赋予ni
+nsel,u,,,nodes(i) !不选上一个节点，防止最近距离反复
+*enddo
+
+
+*cfopen,erchennei-%index1%-%index2%-%index3%,dat     !输出的文件名为：mesh.dat
+*vwrite,nodes(1),xyz(1,1),xyz(1,2),disp(1,1),disp(1,2),disp(1,3),sigma(1,1),sigma(1,2)
+(8f16.2)
+*cfclose
+
+nodes=
+xyz=
+disp=
+sigma=
+moment=
+elems=
+ndlst=
+*set,index3,index3+1  ! 在每次循环中将x的值加1  
+
+*enddo
+
+! ---------------------------------------post26提取二衬位移时程结果
+resume,'tunnel','db'
+
+/post26  
+allsel  
+numvar=2005 ! 假设有2005个时间步  
+  
+*dim, nodeids, array, 6  
+nodeids(1) = 301  
+nodeids(2) = 311  
+nodeids(3) = 401  
+nodeids(4) = 430  
+nodeids(5) = 414  
+nodeids(6) = 359  
+
+*dim,times,array,numvar,1
+*dim,uux,array,numvar,6  ! 存储每个节点的X方向位移 
+*dim,uuy,array,numvar,6
+*dim,utotal,array,numvar,7 
+  
+*do, nodeindex, 1, 6  
+	nodeid = nodeids(nodeindex)  
+	!提取位移
+	nsol,2,nodeid,u,x,ux_1
+	vget,times(1),1
+	vget,uux(1,nodeindex),2
+	nsol,2,nodeid,u,y,uy_1
+	vget,uuy(1,nodeindex),2
+	vardel,2
+!计算合位移  
+    *do,i,1,numvar  
+       utotal(i,nodeindex)=sqrt(uux(i,nodeindex)**2+uuy(i,nodeindex)**2)  
+    *enddo  
+*enddo  
+
+
+*cfopen,erchen-%index1%-%index2%,dat     !输出的文件名为：mesh.dat
+*vwrite,times(1),utotal(1,1),utotal(1,2),utotal(1,3),utotal(1,4),utotal(1,5),utotal(1,6)
+(7f10.6) !写入数据的格式
+*cfclos
+uux=
+uuy=
+utotal=

@@ -1,0 +1,93 @@
+!!!! -----------------------------OpenSwim----------------------------------
+!! 
+!        Title: Open source Seismic wave input methods (OpenSwim)
+!        Author: Hubery Woo
+!        Institution: Chongqing Three Gorges University
+!        Email: hbw8456@163.com
+!        Date: July 2023
+!
+! This script extracts node and element data from an ANSYS result file
+! and writes the information into a Tecplot-compatible format.
+! It includes definitions for node coordinates, displacements, and element connectivity.
+! The output is organized into a header and data section suitable for visualization in Tecplot.
+!! 
+!!!! -----------------------------------------------------------------------
+!!!!--------------------加载地震波数据-------------------------------------
+
+! add the working directory
+resume,'tunnel','db'
+
+/solu
+!读入节点荷载信息
+no1=time_num*nodenum1
+no2=time_num*nodenum2
+no3=time_num*nodenum3
+
+
+*create nodeloadf
+*DIM,node1,ARRAY,no1,3
+*DIM,node2,ARRAY,no2,3   
+*DIM,node3,ARRAY,no3,3  
+
+!*dim,load,array,time_num,2
+*VREAD,node1(1,1),nleft,dat,C:\Users\Administrator\Documents\MATLAB,JIK,3,no1  
+(3F17.1)
+*VREAD,node2(1,1),nright,dat,C:\Users\Administrator\Documents\MATLAB,JIK,3,no2  
+(3F17.1)
+*VREAD,node3(1,1),nbottom,dat,C:\Users\Administrator\Documents\MATLAB,JIK,3,no3  
+(3F17.1)
+
+
+! nodeloadf
+
+
+!!!!---------------------求解设置----------------------------
+
+allsel
+ANTYPE,trans
+TRNOPT,FULL
+LUMPM,0
+
+
+*do,t,1,time_num,1
+
+Time,t*dtime
+!循环施加荷载
+
+
+
+cmsel,s,ndleft
+nplot
+*do,i,1,nodenum1,1
+F,node1((i-1)*time_num+t,1),FX,node1((i-1)*time_num+t,2)
+F,node1((i-1)*time_num+t,1),FY,node1((i-1)*time_num+t,3)
+*enddo
+
+
+
+allsel
+cmsel,s,ndright
+nplot
+*do,i,1,nodenum2,1
+F,node2((i-1)*time_num+t,1),FX,node2((i-1)*time_num+t,2)
+F,node2((i-1)*time_num+t,1),FY,node2((i-1)*time_num+t,3)
+*enddo
+
+
+allsel
+cmsel,s,ndbottom
+nplot
+*do,i,1,nodenum3,1
+F,node3((i-1)*time_num+t,1),FX,node3((i-1)*time_num+t,2)
+F,node3((i-1)*time_num+t,1),FY,node3((i-1)*time_num+t,3)
+*enddo
+
+allsel,all
+SOLVE
+
+*ENDDO
+
+allsel
+finish
+
+save,'tunnel','db'

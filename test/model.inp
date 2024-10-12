@@ -1,0 +1,263 @@
+!!!! -----------------------------OpenSwim----------------------------------
+!! 
+!        Title: Open source Seismic wave input methods (OpenSwim)
+!        Author: Hubery Woo
+!        Institution: Chongqing Three Gorges University
+!        Email: hbw8456@163.com
+!        Date: July 2023
+!
+! This script extracts node and element data from an ANSYS result file
+! and writes the information into a Tecplot-compatible format.
+! It includes definitions for node coordinates, displacements, and element connectivity.
+! The output is organized into a header and data section suitable for visualization in Tecplot.
+!! 
+!!!! -----------------------------------------------------------------------
+
+finish
+/clear
+! Set the working directory for ANSYS
+! /working, 'C:/Users/woo/Documents/matlab/openSwim/temp/'
+/CWD,'C:\Users\woo\Documents\matlab\openSwim\temp' 
+/prep7
+! Define material and geometric parameters
+xb=800
+yb=600
+
+elastic=2E+9
+nu=0.25
+rho=2000
+shear=elastic/(2*(1+nu))
+lambda=elastic*nu/((1+nu)*(1-2*nu))
+cp=sqrt((lambda+2*shear)/rho)
+cs=sqrt(shear/rho)
+
+A=0.8
+B=1.1
+kn=(lambda+2*shear)/(1+A)
+kt=shear/(1+A)
+cn=B*rho*cp
+ct=B*rho*cs
+
+e_size=20
+dtime=0.02
+tt=2
+time_num=tt/dtime
+
+! Define element types
+et, 1, plane42, , , 2
+et, 2, 14, , , 2
+
+! Define material properties
+mp, dens, 1, rho
+mp, ex, 1, elastic
+mp, prxy, 1, nu
+
+! Create rectangular geometry
+rectng, 0, xb, 0, yb
+allsel
+lesize, all, e_size
+amesh, all
+csys, 0
+
+! Define components for easier selection
+nsel, s, loc, x, 0
+cm, ndleft, node
+esln
+cm, elleft, elem
+
+nsel, s, loc, x, xb
+cm, ndright, node
+esln
+cm, elright, elem
+
+nsel, s, loc, y, 0
+cm, ndbottom, node
+esln
+cm, elbottom, elem
+allsel
+
+! Write parameters to a text file
+*cfopen, para, dat  ! Open para.le for writing
+*vwrite, xb, yb, dtime, elastic, nu, rho, A, B
+('xb=',f10.2,/'yb=',f10.2,/'dtime=',f10.4,/'elastic=',f15.2,/'nu=',f10.2,/'rho=',f10.2,/'A=',f10.2,/'B=',f10.2)
+*cfclose           ! Close e para.dat file
+
+
+
+!!!!------------------输出节点信息（按照3个边界）-----------
+!!!!---------弹簧和阻尼单元（吸波不完全，检查边界节点是否分开，检查影响面积）--
+allsel
+cmsel,s,ndleft
+nsel,u,loc,y,0
+*get,NodeNum1,NODE,0,COUNT
+*get,nd1,NODE,0,NUM,MIN
+*dim,nodes1,array,NodeNum1
+*dim,nxy1,array,NodeNum1,2
+*dim,node_area1,array,NodeNum1,1
+*get,node_max,node,,num,maxd
+*get,real_max,rcon,,num,max  
+
+*do,i,1,NodeNum1,1
+nodes1(i)=nd1
+nxy1(i,1)=NX(nd1)
+nxy1(i,2)=NY(nd1)
+node_area1(i)=ARNODE(nd1)
+
+node_max=node_max+1
+real_max=real_max+1
+N,node_max,nxy1(i,1)+0.1,nxy1(i,2)
+TYPE,2
+R,real_max,kn/xb*node_area1(i),cn*node_area1(i)
+REAL,real_max              !x轴normal弹簧阻尼
+E,nodes1(i),node_max
+D,node_max,all
+
+node_max=node_max+1
+real_max=real_max+1
+N,node_max,nxy1(i,1),nxy1(i,2)+0.1
+TYPE,2
+R,real_max,kt/xb*node_area1(i),ct*node_area1(i)
+REAL,real_max              !y轴tangential弹簧阻尼
+E,nodes1(i),node_max
+D,node_max,all
+
+nd1=NDNEXT(nd1)
+*enddo
+nodes1=
+nxy1=
+node_area1=
+
+
+allsel
+cmsel,s,ndleft
+*get,NodeNum1,NODE,0,COUNT
+*get,nd1,NODE,0,NUM,MIN
+*dim,nodes1,array,NodeNum1
+*dim,nxy1,array,NodeNum1,2
+*dim,node_area1,array,NodeNum1,1
+*get,node_max,node,,num,maxd
+
+*do,i,1,NodeNum1,1
+nodes1(i)=nd1
+nxy1(i,1)=NX(nd1)
+nxy1(i,2)=NY(nd1)
+node_area1(i)=ARNODE(nd1)
+nd1=NDNEXT(nd1)
+*enddo
+
+*cfopen,nodeinf1,dat           !左边
+*vwrite,nodes1(1),nxy1(1,1),nxy1(1,2),node_area1(1)
+(4f12.4)
+*cfclose
+
+
+allsel
+cmsel,s,ndright
+nsel,u,loc,y,0
+*get,NodeNum2,NODE,0,COUNT
+*get,nd2,NODE,0,NUM,MIN
+*dim,nodes2,array,NodeNum2
+*dim,nxy2,array,NodeNum2,2
+*dim,node_area2,array,NodeNum2,1
+*get,node_max,node,,num,maxd
+*get,real_max,rcon,,num,max  
+
+*do,i,1,NodeNum2,1
+nodes2(i)=nd2
+nxy2(i,1)=NX(nd2)
+nxy2(i,2)=NY(nd2)
+node_area2(i)=ARNODE(nd2)
+
+node_max=node_max+1
+real_max=real_max+1
+N,node_max,nxy2(i,1)+0.1,nxy2(i,2)
+TYPE,2
+R,real_max,kn/xb*node_area2(i),cn*node_area2(i)
+REAL,real_max              !x轴normal弹簧阻尼
+E,nodes2(i),node_max
+D,node_max,all
+
+node_max=node_max+1
+real_max=real_max+1
+N,node_max,nxy2(i,1),nxy2(i,2)+0.1
+TYPE,2
+R,real_max,kt/xb*node_area2(i),ct*node_area2(i)
+REAL,real_max             !y轴tangential弹簧阻尼
+E,nodes2(i),node_max
+D,node_max,all
+
+nd2=NDNEXT(nd2)
+*enddo
+nodes2=
+nxy2=
+node_area2=
+
+
+allsel
+cmsel,s,ndright
+*get,NodeNum2,NODE,0,COUNT
+*get,nd2,NODE,0,NUM,MIN
+*dim,nodes2,array,NodeNum2
+*dim,nxy2,array,NodeNum2,2
+*dim,node_area2,array,NodeNum2,1
+*get,node_max,node,,num,maxd
+
+*do,i,1,NodeNum2,1
+nodes2(i)=nd2
+nxy2(i,1)=NX(nd2)
+nxy2(i,2)=NY(nd2)
+node_area2(i)=ARNODE(nd2)
+nd2=NDNEXT(nd2)
+*enddo
+
+*cfopen,nodeinf2,dat           !右边
+*vwrite,nodes2(1),nxy2(1,1),nxy2(1,2),node_area2(1)
+(4f12.4)
+*cfclose
+
+
+allsel
+cmsel,s,ndbottom
+*get,NodeNum3,NODE,0,COUNT
+*get,nd3,NODE,0,NUM,MIN
+*dim,nodes3,array,NodeNum3
+*dim,nxy3,array,NodeNum3,2
+*dim,node_area3,array,NodeNum3,1
+*get,node_max,node,,num,maxd
+*get,real_max,rcon,,num,max  
+
+*do,i,1,NodeNum3,1
+nodes3(i)=nd3
+nxy3(i,1)=NX(nd3)
+nxy3(i,2)=NY(nd3)
+node_area3(i)=ARNODE(nd3)
+
+node_max=node_max+1
+real_max=real_max+1
+N,node_max,nxy3(i,1),nxy3(i,2)+0.1
+TYPE,2
+R,real_max,kn/yb*node_area3(i),cn*node_area3(i)
+REAL,real_max              !y轴normal弹簧阻尼
+E,nodes3(i),node_max
+D,node_max,all
+
+node_max=node_max+1
+real_max=real_max+1
+N,node_max,nxy3(i,1)+0.1,nxy3(i,2)
+TYPE,2
+R,real_max,kt/yb*node_area3(i),ct*node_area3(i)
+REAL,real_max              !x轴tangential弹簧阻尼
+E,nodes3(i),node_max
+D,node_max,all
+
+nd3=NDNEXT(nd3)
+*enddo
+
+*cfopen,nodeinf3,dat           !底部
+*vwrite,nodes3(1),nxy3(1,1),nxy3(1,2),node_area3(1)
+(4f12.4)
+*cfclose
+
+
+allsel
+save,'tunnel','db'
