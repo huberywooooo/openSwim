@@ -30,44 +30,44 @@ classdef plot_setting < handle
         width = 8;              % Figure width
         height = 6;             % Figure height
         title = '(a) multi-lines plot'; % Figure title
-        titlefontsize = 12;      % Title font size
-        titlepos = [4, -3, 0];   % Title position
+        titlefontsize = 12;     % Title font size
+        titlepos = [4, -3, 0];  % Title position
         
         % Axis properties
-        xlabel = 'xaxis';        % X-axis label
-        ylabel = 'yaxis';        % Y-axis label
-        xlim = [-10, 10];        % X-axis limit
-        ylim = [-10, 10];        % Y-axis limit
-        fontname = 'Arial';      % Font name for text
-        axfontsize = 10;         % Axis font size
+        xlabel = 'xaxis';       % X-axis label
+        ylabel = 'yaxis';       % Y-axis label
+        xlim = [-10, 10];       % X-axis limit
+        ylim = [-10, 10];       % Y-axis limit
+        fontname = 'Arial';     % Font name for text
+        axfontsize = 10;        % Axis font size
         axcolor = [0.1, 0.1, 0.1]; % Axis color
         axposition = [0.15, 0.2, 0.7, 0.7]; % Axis position
         
         % Legend properties
-        legendfontsize = 10;     % Legend font size
-        legendlabels = {};       % Legend labels
+        legendfontsize = 10;    % Legend font size
+        legendlabels = {};      % Legend labels
         legendpos = [0.75, 0.85, 0.15, 0.1]; % Legend position
-        legendbox = 'on';        % Display legend box
+        legendbox = 'on';       % Display legend box
         
         % Line properties
         linecolors = colorscheme(6, 5); % Line colors
         linestyles = {'--', '--', '--', '--', '-.', '-', ':'}; % Line styles
-        linewidths = 1;          % Line width
+        linewidths = 1;         % Line width
         markers = {'o', 'd', '^', 'v', 'd', 'o', '^'}; % Line markers
-        markersizes = 6;         % Marker size
-        facecolor = 'none';      % Marker face color
+        markersizes = 6;        % Marker size
+        facecolor = 'none';     % Marker face color
         
         % Grid properties
-        xgrid = 'on';            % X-axis grid
-        ygrid = 'on';            % Y-axis grid
+        xgrid = 'on';           % X-axis grid
+        ygrid = 'on';           % Y-axis grid
         
         % Tick properties
-        tickdir = 'out';         % Tick direction
+        tickdir = 'out';        % Tick direction
         ticklength = [0.01, 0.01]; % Tick length
-        xtick = [];              % X-tick interval
-        ytick = [];              % Y-tick interval
-        xminortick = 'off';      % Minor X-ticks
-        yminortick = 'off';      % Minor Y-ticks
+        xtick = [];             % X-tick interval
+        ytick = [];             % Y-tick interval
+        xminortick = 'off';     % Minor X-ticks
+        yminortick = 'off';     % Minor Y-ticks
     end
     
     %% Methods for plot setting and output
@@ -133,4 +133,4 @@ classdef plot_setting < handle
             print(hfig, 'multilines.tif', '-r300', '-dtiff');
         end
     end
-end
+end % function plot_setting
