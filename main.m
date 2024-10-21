@@ -17,6 +17,10 @@
 %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
 %   Copyright 2023-2024 Chongqing Three Gorges University
 
+
+%--------------------------------------------------------------------------
+%             L O A D   P A T H   A N D   C L E A R   V A R I A B L E S 
+%--------------------------------------------------------------------------
 % Get the current directory path
 addpath(genpath(pwd),'-begin'); 
 
@@ -27,7 +31,9 @@ global wavemode alpha; %#ok
 wavemode = 'svwave'; % seiswave type (pwave or svwave)
 alpha = 20 * pi / 180;  % Angle of seismic wave incidence
 
-% Load earthquake wave data or select peer wave
+%--------------------------------------------------------------------------
+%             L O A D   E A R T H Q U A K E   W A V E   D A T A 
+%--------------------------------------------------------------------------
 dtime = 0.02;  % Time step
 tt = 2;        % Total time
 t = 0.2;       % Pulse duration
@@ -35,6 +41,9 @@ sw = seis_wave('gen', dtime, t, tt);
 % Uncomment to import earthquake acceleration data
 % sw = seis_wave('read', 'elcentro.txt');
 
+%--------------------------------------------------------------------------
+%             O U T P U T   E A R T H Q U A K E   W A V E   D A T A 
+%--------------------------------------------------------------------------
 % Output matrix of earthquake waves
 filename = 'seiswave.dat';
 outmatrix = sw.time;
@@ -46,6 +55,10 @@ nleft = 'nleft.dat';
 nright = 'nright.dat';
 nbottom = 'nbottom.dat';
 
+
+%--------------------------------------------------------------------------
+%             I N I T I A L I Z E   S P R I N G   M A T R I C E S 
+%--------------------------------------------------------------------------
 % Initialize spring and damping matrices
 % node_spring = zeros(2, 2);
 % node_damp = zeros(2, 2);
@@ -56,22 +69,31 @@ nleftforce = [];
 nrightforce = []; 
 nbottomforce = [];
 
-
+%--------------------------------------------------------------------------
+%             L O A D   A N S Y S   M O D E L 
+%--------------------------------------------------------------------------
 % clear the ANSYS files before running the model
 filepath = fullfile(pwd, 'temp');
 clear_log(filepath);
-
 
 % Run the ANSYS model.inp file to generate the model parameters
 filepath = fullfile(pwd, 'test', 'model.inp');
 call_ansys(filepath);
 
+
+%--------------------------------------------------------------------------
+%             M A T E R I A L   P A R A   A N D   T R A N S   M A T R I X 
+%--------------------------------------------------------------------------
 % Define physical model and material parameters
 para = model_para();
 
 % Define transformation matrix for different incident waves
 matrix = transfer_matrix(para);
 
+
+%--------------------------------------------------------------------------
+%             C A L C U L A T E   N O D A L   F O R C E S 
+%--------------------------------------------------------------------------
 %% Loop through boundary faces and calculate nodal displacements, velocities, and stresses
 for info = 1:3
     filename = sprintf('nodeinf%d.dat', info);
@@ -97,7 +119,7 @@ for info = 1:3
     for i = 1:length(node_num)
         x = node_x(i);
         y = node_y(i);
-
+        
         % Calculate time lag
         lag = calc_lagtime(para, x, y); 
 
@@ -145,6 +167,10 @@ for info = 1:3
     end % endloop through nodes
 end % endloop through boundary faces
 
+
+%--------------------------------------------------------------------------
+%             O U T P U T   N O D A L   F O R C E S 
+%--------------------------------------------------------------------------
 % Output forces to respective files
 output_matrix(nleftforce, nleft);
 output_matrix(nrightforce, nright);
@@ -161,6 +187,9 @@ monitor_ansys(workingDir);
 write_log('The solve.inp has been executed......openSwim.');
 
 
+%--------------------------------------------------------------------------
+%             P O S T P R O C E S S I N G   A N S Y S   M O D E L 
+%--------------------------------------------------------------------------
 % Run the ANSYS post.inp file to generate the model parameters
 filepath = fullfile(pwd, 'test', 'post.inp');
 call_ansys(filepath);
@@ -169,3 +198,6 @@ monitor_ansys(workingDir);
 % Write a message to the file
 write_log('The post.inp has been executed......openSwim.');
 
+%--------------------------------------------------------------------------
+%             E N D   O F   P R O G R A M 
+%--------------------------------------------------------------------------
