@@ -19,7 +19,7 @@ function output_matrix(matrix,filename)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
     
 
     % Check if the input matrix is a 2D array

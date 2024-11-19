@@ -1,5 +1,5 @@
 classdef plot_setting < handle
-    %% plot_setting - Class for plot formatting settings
+    % plot_setting - Class for plot formatting settings
     % This class handles various plotting settings and allows customization
     % for figure, axis, legend, lines, and more.
     %

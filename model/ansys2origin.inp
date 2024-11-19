@@ -1,12 +1,14 @@
+! get the displacement time history
+
 /post26
 allsel
 nodenum=282
-nsol,2,nodenum,u,x,ux_1   !提取位移时程
+nsol,2,nodenum,u,x,ux_1   ! get the displacement time history
 *dim,uuu1,,100,2
 vget,uuu1(1,1),1
 vget,uuu1(1,2),2
 
-nsol,2,nodenum,u,y,uy_1   !提取位移时程
+nsol,2,nodenum,u,y,uy_1   ! get the displacement time history
 *dim,uuu2,,100,2
 vget,uuu2(1,1),1
 vget,uuu2(1,2),2
@@ -15,7 +17,7 @@ vget,uuu2(1,2),2
 *create,temp
 *cfopen,dd25-1,dat
 *vwrite,uuu1(1,1),uuu1(1,2),uuu2(1,2)
-(f10.6,f10.6,f10.6) !写入数据的格式
+(f10.6,f10.6,f10.6) ! write the data format
 *cfclos
 *end
 

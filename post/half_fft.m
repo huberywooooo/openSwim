@@ -18,13 +18,14 @@ function ss=half_fft(time,accel)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
 
     %% Ensure the length of the time vector and acceleration vector are the same
     if length(time) ~= length(accel)
         error('The length of the time vector and acceleration vector must be the same.');
     end
+    
     % Calculate the time interval
     dt = mean(diff(time)); % Average time interval dt = time(2) - time(1);
     % Calculate the sampling frequency
@@ -38,7 +39,8 @@ function ss=half_fft(time,accel)
     p1 = abs(y/n);
     % Get the amplitude of the single-sided spectrum
     amplitude = p1(1:n/2+1);
-    amplitude(2:end-1) = 2 * amplitude(2:end-1); % Multiply by 2 except for the DC and Nyquist components
+    % Multiply by 2 except for the DC and Nyquist components
+    amplitude(2:end-1) = 2 * amplitude(2:end-1); 
     % Create the frequency vector
     freq = fs * (0:(n/2)) / n;
     
@@ -54,7 +56,8 @@ function ss=half_fft(time,accel)
     p2 = angle(y/n);
     % Get the phase of the single-sided spectrum
     phase = p2(1:n/2+1);
-    phase(2:end-1) = 2 * phase(2:end-1); % Multiply by 2 except for the DC and Nyquist components
+    % Multiply by 2 except for the DC and Nyquist components
+    phase(2:end-1) = 2 * phase(2:end-1); 
     
     %% Create a structure to store all features
     ss.freq = freq;

@@ -17,7 +17,7 @@ function [uu, vv, sigma1, sigma2] = calc_glouv(para, matrix, laguv, info)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and Simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
 
     global wavemode; %#ok

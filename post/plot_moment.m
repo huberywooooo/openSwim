@@ -27,7 +27,7 @@ function ss = plot_moment(data, scalings)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
     %% Initialize element matrix (element IDs, node i and j IDs, and moment values)
     elements(:,1) = data(:,1); elements(:,2) = data(:,2); elements(:,3) = data(:,3);
@@ -95,4 +95,5 @@ function ss = plot_moment(data, scalings)
     ss.ref_momenty1 = ref_momenty1;
     ss.ref_momentx2 = ref_momentx2;
     ss.ref_momenty2 = ref_momenty2;
+
 end

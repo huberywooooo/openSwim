@@ -14,12 +14,12 @@ function ansys_error(errFilePath)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
     
     % Check if the input argument is provided and not empty
     if nargin < 1 || isempty(errFilePath)
-        write_log('ansys_error has been not found......openSwim.');
+        write_log('ansys_error has been not found.');
         return;
     end
 
@@ -59,4 +59,5 @@ function ansys_error(errFilePath)
     if ~errorFound
         disp('No errors found in the ANSYS .err file.');
     end
+    
 end % function ansys_error

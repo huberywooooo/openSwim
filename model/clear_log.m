@@ -10,7 +10,7 @@ function clear_log(workingDir)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and Simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
 
     % Check if the directory exists
@@ -33,7 +33,7 @@ function clear_log(workingDir)
             end
         end
         
-        write_log('clear_log has been executed......openSwim.');
+        write_log('clear_log has been executed.');
     end
 
 end % function clear_log

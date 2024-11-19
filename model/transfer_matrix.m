@@ -13,7 +13,7 @@ function matrix = transfer_matrix(para)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
     
     global wavemode; %#ok
@@ -71,4 +71,5 @@ function matrix = transfer_matrix(para)
         otherwise
             disp('wavemode must be P wave, SV wave, or SH wave.');
     end
+    
 end % function transfer_matrix

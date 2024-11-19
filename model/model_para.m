@@ -18,7 +18,7 @@ function para = model_para()
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
     
     global wavemode alpha; %#ok
@@ -65,7 +65,7 @@ function para = model_para()
     para.c_t = para.B * para.rho * para.cs;
 
     % write a message to the file
-    write_log('model_para has been executed......openSwim.');
+    write_log('model_para has been executed.');
 
 end % function model_para
 
@@ -99,7 +99,7 @@ function para = load_para(inputFile,workingDir)
     % Check if the file was successfully opened
     if fileID == -1
         ansys_error();
-        write_log('ansys_error has been not found......openSwim.');
+        write_log('ansys_error has been not found.');
         return;
     end
 

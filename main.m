@@ -15,7 +15,7 @@
 %
 %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
 %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-%   Copyright 2023-2024 Chongqing Three Gorges University
+%   Copyright 2009-2024 Chongqing Three Gorges University
 
 
 %--------------------------------------------------------------------------
@@ -184,7 +184,7 @@ call_ansys(filepath);
 workingDir = fullfile(pwd, 'temp');
 monitor_ansys(workingDir);
 % Write a message to the file
-write_log('The solve.inp has been executed......openSwim.');
+write_log('The solve.inp has been executed.');
 
 
 %--------------------------------------------------------------------------
@@ -196,7 +196,7 @@ call_ansys(filepath);
 monitor_ansys(workingDir);
 
 % Write a message to the file
-write_log('The post.inp has been executed......openSwim.');
+write_log('The post.inp has been executed.');
 
 %--------------------------------------------------------------------------
 %             E N D   O F   P R O G R A M 

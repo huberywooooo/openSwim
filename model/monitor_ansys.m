@@ -12,7 +12,7 @@ function monitor_ansys(workingDir)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
     
     
     % Monitor the ANSYS output file until its size no longer changes.
@@ -39,6 +39,6 @@ function monitor_ansys(workingDir)
     end
     
     % Write a message to the file
-    write_log('monitor_ansys has been executed......openSwim.');
+    write_log('monitor_ansys has been executed.');
     
 end % function monitor_ansys

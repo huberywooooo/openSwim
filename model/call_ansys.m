@@ -16,7 +16,7 @@ function call_ansys(inputFile, ansysPath, workingDir)
     %
     %   OpenSwim: An Open Source Library for Seismic Wave Input and Simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
 
     % Define the ANSYS executable, input file, and working directory
@@ -62,7 +62,7 @@ function call_ansys(inputFile, ansysPath, workingDir)
     % Monitoring the ANSYS running status
     monitor_ansys(workingDir);
 
-end % function run_model
+end % function call_ansys
 
 
 function ansysPath = find_ansys()

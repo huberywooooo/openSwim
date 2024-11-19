@@ -24,7 +24,7 @@ function ss=plot_stress(data,scalings)
 
     %   OpenSwim: An Open Source Library for Seismic Wave Input and Simulation Methods
     %   Author(s): Hubery H.B. Woo (hbw8456@163.com)
-    %   Copyright 2023-2024 Chongqing Three Gorges University
+    %   Copyright 2009-2024 Chongqing Three Gorges University
 
     %% Create the element composition matrix, consisting of element nodes and stress values
     % Node numbers, coordinates, and stresses are stored in respective variables
@@ -74,4 +74,5 @@ function ss=plot_stress(data,scalings)
         ss.ref_stressx2 = ref_stressx2;
         ss.ref_stressy2 = ref_stressy2;
     end  
+    
 end % function plot_stress
